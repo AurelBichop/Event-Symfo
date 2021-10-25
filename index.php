@@ -53,13 +53,22 @@
  * composant symfony/event-dispatcher (composer require symfony/event-dispatcher) va nous aider dans notre recherche de la pureté de la POO :D
  */
 
-use App\Controller\OrderController;
-use App\Database;
 use App\Logger;
+use App\Database;
 use App\Mailer\Mailer;
 use App\Texter\SmsTexter;
+use App\Listener\OrderSmsListener;
+use App\Controller\OrderController;
+use App\Listener\OrderEmailsListener;
+use Symfony\Component\EventDispatcher\EventDispatcher;
 
 require __DIR__ . '/vendor/autoload.php';
+
+// Callable 3 types:
+// - fonctions anonymes
+// - fonctions définies
+// - les méthodes d'objets
+
 
 /**
  * INSTANCIATION DES OBJETS DE BASE :
@@ -70,9 +79,17 @@ $database = new Database(); // Une connexion fictive à la base de données (en 
 $mailer = new Mailer(); // Un service fictif d'envoi d'emails (là aussi, que du var_dump)
 $smsTexter = new SmsTexter(); // Un service fictif d'envoi de SMS (là aussi que du var_dump)
 $logger = new Logger(); // Un service de log (qui ne fait que du var_dump aussi)
+$dispatcher = new EventDispatcher();
+
+$orderEmailsListener = new OrderEmailsListener($mailer, $logger);
+$orderSmsListener = new OrderSmsListener($smsTexter, $logger);
+
+$dispatcher->addListener('order.before_insert', [$orderEmailsListener, 'sendToStock']);
+$dispatcher->addListener('order.after_insert', [$orderEmailsListener, 'sendToCustomer'],2);
+$dispatcher->addListener('order.after_insert', [$orderSmsListener,'sendSmsToCustomer'],1);
 
 // Notre controller qui a besoin de tout ces services
-$controller = new OrderController($database, $mailer, $smsTexter, $logger);
+$controller = new OrderController($database, $mailer, $smsTexter, $logger, $dispatcher);
 
 // Si le formulaire a été soumis
 if (!empty($_POST)) {
