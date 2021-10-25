@@ -7,7 +7,7 @@ use App\Event\OrderEvent;
 use App\Logger;
 use App\Texter\SmsTexter;
 
-class OrderSmSListener
+class OrderSmsListener
 {
     protected $logger;
     protected $texter;
@@ -17,7 +17,9 @@ class OrderSmSListener
         $this->logger = $logger;
         $this->texter = $texter;
     }
-    
+
+
+
     public function sendSmsToCustomer(OrderEvent $event){
         $order = $event->getOrder();
         // Après enregistrement on veut aussi envoyer un SMS au client
