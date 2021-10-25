@@ -53,17 +53,24 @@
  * composant symfony/event-dispatcher (composer require symfony/event-dispatcher) va nous aider dans notre recherche de la pureté de la POO :D
  */
 
-use App\Logger;
-use App\Database;
-use App\Mailer\Mailer;
-use App\Texter\SmsTexter;
-use App\Listener\OrderSmsSubscriber;
+use App\Listener\OrderSmsListener;
 use App\Controller\OrderController;
 use App\Listener\OrderEmailsSubscriber;
-use App\Listener\OrderSmsListener;
+use Symfony\Component\Config\FileLocator;
 use Symfony\Component\EventDispatcher\EventDispatcher;
+use Symfony\Component\DependencyInjection\ContainerBuilder;
+use Symfony\Component\DependencyInjection\Loader\YamlFileLoader;
 
 require __DIR__ . '/vendor/autoload.php';
+
+$container = new ContainerBuilder();
+
+
+$loader = new YamlFileLoader($container,new FileLocator(__DIR__."/config"));
+
+$loader->load('services.yaml');
+
+$container->compile();
 
 // Callable 3 types:
 // - fonctions anonymes
@@ -76,14 +83,17 @@ require __DIR__ . '/vendor/autoload.php';
  * -----------
  * Nous instancions les objets basiques nécessaires à l'application
  */
-$database = new Database(); // Une connexion fictive à la base de données (en vrai ça ne fait que des var_dump)
-$mailer = new Mailer(); // Un service fictif d'envoi d'emails (là aussi, que du var_dump)
-$smsTexter = new SmsTexter(); // Un service fictif d'envoi de SMS (là aussi que du var_dump)
-$logger = new Logger(); // Un service de log (qui ne fait que du var_dump aussi)
-$dispatcher = new EventDispatcher();
 
-$orderEmailsSubscriber = new OrderEmailsSubscriber($mailer, $logger);
-$orderSmsListener = new OrderSmsListener($smsTexter, $logger);
+// $database = new Database(); // Une connexion fictive à la base de données (en vrai ça ne fait que des var_dump)
+// $mailer = new Mailer(); // Un service fictif d'envoi d'emails (là aussi, que du var_dump)
+// $smsTexter = new SmsTexter(); // Un service fictif d'envoi de SMS (là aussi que du var_dump)
+// $logger = new Logger(); // Un service de log (qui ne fait que du var_dump aussi)
+// $dispatcher = new EventDispatcher();
+
+$orderEmailsSubscriber = $container->get(OrderEmailsSubscriber::class);
+$orderSmsListener = $container->get(OrderSmsListener::class);
+
+$dispatcher = $container->get(EventDispatcher::class);
 
 //$dispatcher->addListener('order.before_insert', [$orderEmailsListener, 'sendToStock']);
 //$dispatcher->addListener('order.after_insert', [$orderEmailsListener, 'sendToCustomer'],2);
@@ -92,7 +102,7 @@ $dispatcher->addSubscriber($orderEmailsSubscriber);
 
 
 // Notre controller qui a besoin de tout ces services
-$controller = new OrderController($database, $dispatcher);
+$controller = $container->get(OrderController::class);
 
 // Si le formulaire a été soumis
 if (!empty($_POST)) {
