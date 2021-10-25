@@ -53,13 +53,13 @@
  * composant symfony/event-dispatcher (composer require symfony/event-dispatcher) va nous aider dans notre recherche de la pureté de la POO :D
  */
 
-use App\Listener\OrderSmsListener;
 use App\Controller\OrderController;
 use App\Listener\OrderEmailsSubscriber;
 use Symfony\Component\Config\FileLocator;
-use Symfony\Component\EventDispatcher\EventDispatcher;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Loader\YamlFileLoader;
+use Symfony\Component\EventDispatcher\EventDispatcher;
+use App\Listener\OrderSmsListener;
 
 require __DIR__ . '/vendor/autoload.php';
 
@@ -90,15 +90,15 @@ $container->compile();
 // $logger = new Logger(); // Un service de log (qui ne fait que du var_dump aussi)
 // $dispatcher = new EventDispatcher();
 
-$orderEmailsSubscriber = $container->get(OrderEmailsSubscriber::class);
-$orderSmsListener = $container->get(OrderSmsListener::class);
+//$orderEmailsSubscriber = $container->get(OrderEmailsSubscriber::class);
+//$orderSmsListener = $container->get(OrderSmsListener::class);
 
-$dispatcher = $container->get(EventDispatcher::class);
+//$dispatcher = $container->get(EventDispatcher::class);
 
 //$dispatcher->addListener('order.before_insert', [$orderEmailsListener, 'sendToStock']);
 //$dispatcher->addListener('order.after_insert', [$orderEmailsListener, 'sendToCustomer'],2);
-$dispatcher->addListener('order.after_insert', [$orderSmsListener,'sendSmsToCustomer'],20);
-$dispatcher->addSubscriber($orderEmailsSubscriber);
+//$dispatcher->addListener('order.after_insert', [$orderSmsListener,'sendSmsToCustomer'],20);
+//$dispatcher->addSubscriber($orderEmailsSubscriber);
 
 
 // Notre controller qui a besoin de tout ces services

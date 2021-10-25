@@ -18,4 +18,12 @@ services:
 
   Symfony\Component\EventDispatcher\EventDispatcher: 
     public: true
-    
+    calls: 
+      - method: "addListener"
+        arguments:
+          - order.after_insert
+          - ['@App\Listener\OrderSmsListener','sendSmsToCustomer']
+          - 3
+      - method: "addSubscriber"
+        arguments:
+          - '@App\Listener\OrderEmailsSubscriber'
