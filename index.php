@@ -87,7 +87,7 @@ $orderSmsListener = new OrderSmsListener($smsTexter, $logger);
 
 //$dispatcher->addListener('order.before_insert', [$orderEmailsListener, 'sendToStock']);
 //$dispatcher->addListener('order.after_insert', [$orderEmailsListener, 'sendToCustomer'],2);
-$dispatcher->addListener('order.after_insert', [$orderSmsListener,'sendSmsToCustomer'],1);
+$dispatcher->addListener('order.after_insert', [$orderSmsListener,'sendSmsToCustomer'],20);
 $dispatcher->addSubscriber($orderEmailsSubscriber);
 
 
