@@ -1,4 +1,9 @@
 services:
+  _instanceof: 
+    Symfony\Component\EventDispatcher\EventSubscriberInterface:
+      tags: ['app.event_subscriber'] 
+    
+      
   _defaults:
     autowire: true
 
@@ -11,8 +16,8 @@ services:
   App\Listener\OrderSmsListener:
     tags: [{name: 'app.event_listener', event: order.after_insert, method: sendSmsToCustomer, priority: 3}]
 
-  App\Listener\OrderEmailsSubscriber: 
-    tags: ['app.event_subscriber']  
+  # App\Listener\OrderEmailsSubscriber: 
+  #   tags: ['app.event_subscriber']  
 
   Symfony\Component\EventDispatcher\EventDispatcher: ~
     # public: true   

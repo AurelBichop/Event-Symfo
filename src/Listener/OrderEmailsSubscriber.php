@@ -7,7 +7,7 @@ use App\Logger;
 use App\Mailer\Email;
 use App\Mailer\Mailer;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
-use Symfony\Component\EventDispatcher\GenericEvent;
+
 
 class OrderEmailsSubscriber implements EventSubscriberInterface
 {

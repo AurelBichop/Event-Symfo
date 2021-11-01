@@ -1,5 +1,8 @@
 <?php
 
+use App\Controller\OrderController;
+
+require __DIR__.'/config/bootstrap.php';
 /**
  * PREMIERE PARTIE : BIENVENUE DANS CE COURS SUR LE COMPOSANT SYMFONY/EVENT-DISPATCHER !
  * -------------
@@ -53,27 +56,7 @@
  * composant symfony/event-dispatcher (composer require symfony/event-dispatcher) va nous aider dans notre recherche de la pureté de la POO :D
  */
 
-use App\Controller\OrderController;
-use App\DependencyInjection\EventCompilerPass;
-use App\Listener\OrderEmailsSubscriber;
-use Symfony\Component\Config\FileLocator;
-use Symfony\Component\DependencyInjection\ContainerBuilder;
-use Symfony\Component\DependencyInjection\Loader\YamlFileLoader;
-use Symfony\Component\EventDispatcher\EventDispatcher;
-use App\Listener\OrderSmsListener;
 
-require __DIR__ . '/vendor/autoload.php';
-
-$container = new ContainerBuilder();
-
-
-$loader = new YamlFileLoader($container,new FileLocator(__DIR__."/config"));
-
-$loader->load('services.yaml');
-
-$container->addCompilerPass(new EventCompilerPass);
-
-$container->compile();
 
 // Callable 3 types:
 // - fonctions anonymes
