@@ -54,6 +54,7 @@
  */
 
 use App\Controller\OrderController;
+use App\DependencyInjection\EventCompilerPass;
 use App\Listener\OrderEmailsSubscriber;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
@@ -69,6 +70,8 @@ $container = new ContainerBuilder();
 $loader = new YamlFileLoader($container,new FileLocator(__DIR__."/config"));
 
 $loader->load('services.yaml');
+
+$container->addCompilerPass(new EventCompilerPass);
 
 $container->compile();
 
